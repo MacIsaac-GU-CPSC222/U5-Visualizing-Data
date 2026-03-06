@@ -8,7 +8,7 @@ __pycache__/
 
 # C extensions
 *.so
-
+hide_sprint
 # Distribution / packaging
 .Python
 build/
