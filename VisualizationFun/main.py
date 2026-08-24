@@ -38,8 +38,8 @@ def line_chart_example(x, y, y2, filename):
     plt.ylabel("Season Totals")
 
     plt.grid()
-    # plt.show()
-    plt.savefig(filename)
+    plt.show()
+    # plt.savefig(filename)
 
 def scatter_chart_ex(x,y, filename):
     plt.figure(layout="constrained")
