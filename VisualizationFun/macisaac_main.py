@@ -193,7 +193,7 @@ def task3(df):
 def main():
     # data source: https://www.sports-reference.com/cbb/players/graham-ike-1/gamelog/2025
     df_ike = pd.read_csv("ike_game_stats.csv",)
-    df_ike["Date"] = pd.to_datetime(df_ike["Date"])
+    df_ike["Date"] = pd.to_datetime(df_ike["Date"], format="%Y-%m-%d")
     line_chart_example(df_ike, "figures/line_example.png")
     
     
