@@ -42,7 +42,30 @@ def line_chart_example(df,filename):
     # Example: Points scored by a basketball team across a season.
     # NOTE: Avoid connecting unrelated categories (e.g., player names)
     # because the lines imply continuity between observations.
-    pass
+    
+    # x = [1,2,3] day of the week
+    # y = [2,0,1] salads eaten
+    df = df.sort_values("Date")
+    x = df["Date"]
+    y_min = df["MP"]
+    y_pts = df["PTS"]
+    # print(x.head())
+    # print(y_min.head())
+    plt.figure(layout="constrained")
+
+    plt.plot(x, y_min, label="Minutes", c="blue", lw=2, marker="o")
+
+    # Add the second line
+    plt.plot(x, y_pts, label="Points", c="red", lw=2, marker="x", ls="--")
+
+    plt.title("Graham Ike: Points and Minutes by Game (24-25)")
+    plt.xlabel("Game Date")
+    plt.ylabel("Mins/Pts")
+    plt.legend()
+    plt.grid()
+
+    plt.savefig(filename)
+
 
 def scatter_chart_ex(df, filename):
     # SCATTER PLOT
@@ -53,8 +76,13 @@ def scatter_chart_ex(df, filename):
     # - Shows how individual observations are distributed.
     # Example: Minutes played vs. points scored for each player.
     # NOTE: Correlation does not necessarily imply causation.
-    pass
-
+    x = df["MIN"]
+    y = df["PTS"]
+    plt.figure(layout="constrained")
+    plt.scatter(x,y, c="blue", marker="^", s=100)
+    plt.grid(alpha=0.3)
+    # plt.show()
+    plt.savefig(filename)
 
 def bar_chart_ex(ser, filename):
     # BAR CHART
@@ -65,11 +93,23 @@ def bar_chart_ex(ser, filename):
     # - Horizontal bars are especially useful for long category names.
     # Example: Total points scored by each player or class.
     # NOTE: Bar charts should generally start their value axis at zero.
-    pass
+    
+    x = ser.index
+    y = ser
+
+    plt.figure(layout="constrained")
+    plt.bar(x,y, color=["red", "yellow", "blue"])
+    plt.savefig(filename)
 
 def points_per_min_chart(df, filename):
-    pass
 
+    df_clean = df[df["MIN"]>0].copy()
+    df_clean["PTS PER MIN"] = df_clean["PTS"]/ df_clean["MIN"]
+
+    df_clean_sort = df_clean.sort_values("PTS PER MIN")
+    plt.figure(layout="constrained")
+    plt.barh(df_clean_sort.index, df_clean_sort["PTS PER MIN"])
+    
     plt.savefig(filename)
 
 def pie_chart_ex(ser, filename):
@@ -81,8 +121,12 @@ def pie_chart_ex(ser, filename):
     # Example: Percentage of players in each class.
     # NOTE: All slices should represent parts of the same whole.
     # Bar charts are often better for comparing similar percentages.
-    pass
-
+    
+    labels = ser.index
+    y = ser
+    plt.figure(layout="constrained")
+    plt.pie(y, labels=labels, autopct="%1.1f%%")
+    plt.savefig(filename)
 def histogram_ex(x, filename):
     # HISTOGRAM
     # Best for: Showing the distribution of a numerical variable.
@@ -94,12 +138,36 @@ def histogram_ex(x, filename):
     # NOTE: Unlike bar charts, histograms group numerical values
     # into intervals rather than displaying separate categories.
     # The number of bins can significantly change the appearance.
-    pass
+    
+    plt.figure(layout="constrained")
+    plt.hist(x, bins=100, edgecolor="black")
+    plt.title("Distribution of player points scored")
+    plt.savefig(filename)
 
 
 def main():
     # data source: https://www.sports-reference.com/cbb/players/graham-ike-1/gamelog/2025
-    pass
+    df_ike = pd.read_csv("ike_game_stats.csv")
+    df_ike["Date"] = pd.to_datetime(df_ike["Date"], format= "%Y-%m-%d")
+    line_chart_example(df_ike, "figures/ike_line_chart.png")
+
+    df = pd.read_csv("bball.csv", index_col=0)
+    scatter_chart_ex(df, "figures/mins_vs_pts_scatter.png")
+
+    # Players per Class
+    class_counts_ser = df["CLASS"].value_counts()
+    print(class_counts_ser)
+    bar_chart_ex(class_counts_ser, "figures/class_counts_bar.png")
+
+    # Mean points per class
+    grouped_by_class = df.groupby("CLASS")
+    means_pts_ser = grouped_by_class["PTS"].mean()
+    bar_chart_ex(means_pts_ser, "figures/mean_pt_per_class_bar.png")
+
+    pie_chart_ex(class_counts_ser, "figures/pie_chart.png")
+    histogram_ex(df["PTS"], "figures/histogram.png")
+
+    points_per_min_chart(df, "figures/scoring_efficiency.png")
 
 main()
 # TASK 1: TOP 5 SCORERS (bball.csv)
